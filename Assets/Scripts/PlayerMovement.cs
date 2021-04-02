@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public bool IsWalking { get; private set; }
-    public bool IsOnGround { get; private set; }
-
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
     [SerializeField] private LayerMask _ground;
 
     private float _distanceToCheckGround = 1f;
     private Rigidbody2D _rigidbody2D;
+    private Vector2 _direction;
+
+    public bool IsWalking { get; private set; }
+    public bool IsOnGround { get; private set; }
 
     private void Start()
     {
@@ -22,17 +23,12 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         IsOnGround = Physics2D.Raycast(transform.position, Vector2.down, _distanceToCheckGround, _ground);
+        _direction = new Vector2(Input.GetAxis("Horizontal"), 0);
 
-        if (Input.GetKey(KeyCode.A))
+        if (_direction.x != 0)
         {
             IsWalking = true;
-            transform.Translate(_speed * Time.deltaTime * -1, 0, 0);
-        }
-
-        else if (Input.GetKey(KeyCode.D))
-        {
-            IsWalking = true;
-            transform.Translate(_speed * Time.deltaTime, 0, 0);
+            transform.Translate(_direction.x * _speed * Time.deltaTime, 0, 0);
         }
 
         if (Input.GetKey(KeyCode.Space) && IsOnGround)
